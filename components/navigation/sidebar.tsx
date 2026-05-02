@@ -17,7 +17,7 @@ import {
 import { useState } from 'react';
 
 const menuItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: Home },
+  { href: '/', label: 'Dashboard', icon: Home },
   { href: '/courses', label: 'Courses', icon: BookOpen },
   { href: '/exams', label: 'Exams', icon: ClipboardList },
   { href: '/certificates', label: 'Certificates', icon: Award },
