@@ -338,7 +338,7 @@ export default function LandingPage() {
 
           <div className="pt-8 border-t border-border text-center text-sm text-muted-foreground">
             <p>
-              © 2024 Philippine National Police. All rights reserved.
+              © 2026 Philippine National Police. All rights reserved.
             </p>
           </div>
         </div>

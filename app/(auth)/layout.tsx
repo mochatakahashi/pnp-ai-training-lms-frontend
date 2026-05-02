@@ -32,7 +32,7 @@ export default function AuthLayout({
 
         {/* Footer */}
         <div className="mt-8 text-center text-xs text-muted-foreground">
-          <p>© 2024 Philippine National Police. All rights reserved.</p>
+          <p>© 2026 Philippine National Police. All rights reserved.</p>
         </div>
       </div>
     </div>
