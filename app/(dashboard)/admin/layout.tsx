@@ -14,7 +14,9 @@ export default function AdminLayout({
         <Topbar userName="Admin User" />
         
         <main className="flex-1 overflow-auto pt-16 p-4 md:p-8">
-          {children}
+          <div className="w-full">
+            {children}
+          </div>
         </main>
       </div>
     </div>
