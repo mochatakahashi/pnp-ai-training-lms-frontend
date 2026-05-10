@@ -10,7 +10,7 @@ export default function AdminLayout({
     <div className="flex h-screen bg-background">
       <Sidebar userRole="admin" />
       
-      <div className="flex-1 flex flex-col md:ml-64">
+      <div className="flex-1 flex flex-col">
         <Topbar userName="Admin User" />
         
         <main className="flex-1 overflow-auto pt-16 p-4 md:p-8">
