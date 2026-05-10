@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
-const menuItems = [
+const studentItems = [
   { href: '/', label: 'Dashboard', icon: Home },
   { href: '/courses', label: 'Courses', icon: BookOpen },
   { href: '/exams', label: 'Exams', icon: ClipboardList },
@@ -24,9 +24,11 @@ const menuItems = [
 ];
 
 const adminItems = [
+  { href: '/admin', label: 'Dashboard', icon: Home },
   { href: '/admin/courses', label: 'Manage Courses', icon: BookOpen },
-  { href: '/admin/students', label: 'Students', icon: BarChart3 },
-  { href: '/admin/exams', label: 'Exams', icon: ClipboardList },
+  { href: '/admin/students', label: 'Manage Students', icon: BarChart3 },
+  { href: '/admin/exams', label: 'Monitor Exams', icon: ClipboardList },
+  { href: '/admin/certificates', label: 'Monitor Certificates', icon: Award },
   { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
 ];
 
@@ -38,7 +40,7 @@ export function Sidebar({ userRole = 'student' }: SidebarProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
-  const items = userRole === 'admin' ? [...menuItems, ...adminItems] : menuItems;
+  const items = userRole === 'admin' ? adminItems : studentItems;
 
   return (
     <>
