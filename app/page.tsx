@@ -117,7 +117,7 @@ export default function LandingPage() {
                 Sign In
               </Button>
             </Link>
-            <Link href="/signup">
+            <Link href="/login">
               <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
                 Get Started
               </Button>
@@ -157,7 +157,7 @@ export default function LandingPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/signup">
+              <Link href="/login">
                 <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 h-12">
                   Start Learning
                   <ArrowRight className="w-4 h-4 ml-2" />
@@ -257,7 +257,7 @@ export default function LandingPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/signup">
+              <Link href="/login">
                 <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 h-12">
                   Create Account
                   <ArrowRight className="w-4 h-4 ml-2" />

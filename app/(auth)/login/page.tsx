@@ -24,14 +24,8 @@ export default function LoginPage() {
     // Simulate API call
     setTimeout(() => {
       if (email && password) {
-        // Demo: detect role based on email and redirect accordingly
-        if (email.includes('admin')) {
-          // Admin dashboard
-          router.push('/admin')
-        } else {
-          // Trainee/Student dashboard
-          router.push('/')
-        }
+        // Demo: redirect to dashboard
+        router.push('/dashboard')
       } else {
         setError('Please fill in all fields')
       }
@@ -140,12 +134,11 @@ export default function LoginPage() {
           variant="outline"
           className="border-border hover:bg-secondary/50 text-foreground"
           onClick={() => {
-            setEmail('trainee@pnp.gov.ph')
+            setEmail('officer@pnp.gov.ph')
             setPassword('demo123')
-            setTimeout(() => router.push('/'), 500)
           }}
         >
-          Demo Trainee
+          Demo Officer
         </Button>
         <Button
           type="button"
@@ -154,7 +147,6 @@ export default function LoginPage() {
           onClick={() => {
             setEmail('admin@pnp.gov.ph')
             setPassword('admin123')
-            setTimeout(() => router.push('/admin'), 500)
           }}
         >
           Demo Admin

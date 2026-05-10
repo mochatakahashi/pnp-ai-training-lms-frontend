@@ -17,7 +17,7 @@ import {
 import { useState } from 'react';
 
 const studentItems = [
-  { href: '/', label: 'Dashboard', icon: Home },
+  { href: '/dashboard', label: 'Dashboard', icon: Home },
   { href: '/courses', label: 'Courses', icon: BookOpen },
   { href: '/exams', label: 'Exams', icon: ClipboardList },
   { href: '/certificates', label: 'Certificates', icon: Award },
