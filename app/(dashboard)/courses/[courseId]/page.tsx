@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, CheckCircle2, Lock, Play } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Play } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -96,10 +96,12 @@ export default function CourseDetailPage({
 }) {
   const router = useRouter();
   const [selectedModule, setSelectedModule] = useState(courseData.modules[0]);
+  const [modules, setModules] = useState(courseData.modules);
 
-  const completedCount = courseData.modules.filter((m) => m.completed).length;
-  const canAccessModule = (module: typeof courseData.modules[0]) => {
-    return module.order === 1 || courseData.modules[module.order - 2]?.completed;
+  const completedCount = modules.filter((m) => m.completed).length;
+
+  const updateModuleCompletion = (moduleId: string, completed: boolean) => {
+    setModules(modules.map((m) => (m.id === moduleId ? { ...m, completed } : m)));
   };
 
   return (
@@ -143,31 +145,25 @@ export default function CourseDetailPage({
 
             {/* Modules List */}
             <div className="space-y-2">
-              {courseData.modules.map((module) => {
-                const isAccessible = canAccessModule(module);
+              {modules.map((module) => {
                 const isCurrent = selectedModule.id === module.id;
 
                 return (
                   <button
                     key={module.id}
-                    onClick={() => isAccessible && setSelectedModule(module)}
-                    disabled={!isAccessible}
+                    onClick={() => setSelectedModule(module)}
                     className={`w-full text-left p-3 rounded-lg transition-all ${
                       isCurrent
                         ? 'bg-primary text-white shadow-lg'
-                        : isAccessible
-                        ? 'bg-card hover:bg-card/80 text-foreground'
-                        : 'bg-muted/30 text-muted-foreground cursor-not-allowed opacity-60'
+                        : 'bg-card hover:bg-card/80 text-foreground'
                     }`}
                   >
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0 mt-0.5">
                         {module.completed ? (
                           <CheckCircle2 size={20} className="text-green-500" />
-                        ) : isAccessible ? (
-                          <div className="w-5 h-5 rounded-full border-2 border-current opacity-50" />
                         ) : (
-                          <Lock size={20} />
+                          <div className="w-5 h-5 rounded-full border-2 border-current opacity-50" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -207,7 +203,7 @@ export default function CourseDetailPage({
               variant="outline"
               disabled={selectedModule.order === 1}
               onClick={() => {
-                const prevModule = courseData.modules[selectedModule.order - 2];
+                const prevModule = modules[selectedModule.order - 2];
                 if (prevModule) setSelectedModule(prevModule);
               }}
             >
@@ -223,7 +219,10 @@ export default function CourseDetailPage({
             ) : (
               <Button
                 className="bg-primary hover:bg-primary/90"
-                onClick={() => setSelectedModule({ ...selectedModule, completed: true })}
+                onClick={() => {
+                  updateModuleCompletion(selectedModule.id, true);
+                  setSelectedModule({ ...selectedModule, completed: true });
+                }}
               >
                 <Play size={16} className="mr-2" />
                 Mark as Complete
@@ -232,9 +231,9 @@ export default function CourseDetailPage({
 
             <Button
               variant="outline"
-              disabled={selectedModule.order === courseData.modules.length || !selectedModule.completed}
+              disabled={selectedModule.order === modules.length}
               onClick={() => {
-                const nextModule = courseData.modules[selectedModule.order];
+                const nextModule = modules[selectedModule.order];
                 if (nextModule) setSelectedModule(nextModule);
               }}
             >
