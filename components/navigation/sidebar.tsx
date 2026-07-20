@@ -9,8 +9,6 @@ import {
   ClipboardList,
   Award,
   BarChart3,
-  Settings,
-  LogOut,
   Menu,
   X,
 } from 'lucide-react';
@@ -96,25 +94,7 @@ export function Sidebar({ userRole = 'student' }: SidebarProps) {
           })}
         </nav>
 
-        {/* Divider */}
-        <div className="px-4">
-          <div className="h-px bg-border/50" />
-        </div>
 
-        {/* Footer */}
-        <div className="p-4 space-y-2 border-t border-border/50">
-          <Link
-            href="/settings"
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-foreground hover:bg-secondary/50 hover:text-primary transition-all duration-200 group"
-          >
-            <Settings size={20} className="group-hover:rotate-90 transition-transform" />
-            <span className="font-medium">Settings</span>
-          </Link>
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200 text-left group">
-            <LogOut size={20} className="group-hover:-translate-x-1 transition-transform" />
-            <span className="font-medium">Logout</span>
-          </button>
-        </div>
       </aside>
 
       {/* Overlay on mobile */}
