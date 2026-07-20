@@ -103,9 +103,9 @@ export default function CourseDetailPage({
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="h-screen bg-background flex flex-col">
       {/* Header */}
-      <div className="bg-gradient-to-r from-primary to-accent/50 text-white p-6 flex items-center justify-between">
+      <div className="bg-gradient-to-r from-primary to-accent/50 text-white px-8 py-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button onClick={() => router.back()} className="hover:opacity-80 transition-opacity">
             <ArrowLeft size={24} />
