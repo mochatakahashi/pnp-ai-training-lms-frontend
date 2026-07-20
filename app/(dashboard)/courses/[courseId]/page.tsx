@@ -5,16 +5,14 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, BookOpen, Clock, CheckCircle } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Lock, Play } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
-// Mock data
 const courseData = {
   id: '1',
   title: 'Police Ethics and Conduct',
   description: 'Learn the fundamental principles of professional ethics and conduct in policing.',
-  instructor: 'CPO Juan Santos',
   progress: 65,
   modules: [
     {
@@ -31,23 +29,6 @@ const courseData = {
           <li><strong>Professional Ethics:</strong> Standards of conduct specific to law enforcement professionals.</li>
           <li><strong>Code of Conduct:</strong> The PNP Code of Professional Conduct and its requirements.</li>
         </ul>
-        <h3>Why Ethics Matter in Policing</h3>
-        <p>Police officers hold positions of significant authority and public trust. Ethical conduct ensures:</p>
-        <ul>
-          <li>Public confidence in law enforcement</li>
-          <li>Fair and impartial service to all citizens</li>
-          <li>Protection of individual rights and freedoms</li>
-          <li>Maintenance of the rule of law</li>
-        </ul>
-        <h3>The PNP Core Values</h3>
-        <p>The Philippine National Police is guided by core values that reflect our commitment to ethical policing:</p>
-        <ul>
-          <li><strong>Integrity:</strong> Honesty and strong moral principles</li>
-          <li><strong>Accountability:</strong> Responsibility for actions and decisions</li>
-          <li><strong>Transparency:</strong> Open communication and operations</li>
-          <li><strong>Service:</strong> Dedicated service to the public</li>
-          <li><strong>Excellence:</strong> Commitment to high standards</li>
-        </ul>
       `,
       completed: true,
     },
@@ -58,7 +39,7 @@ const courseData = {
       estimatedDuration: 25,
       content: `
         <h2>Decision Making and Ethical Dilemmas</h2>
-        <p>Officers frequently face complex situations that require ethical decision-making. This module teaches frameworks for navigating these challenges.</p>
+        <p>Officers frequently face complex situations that require ethical decision-making.</p>
         <h3>The Ethical Decision-Making Framework</h3>
         <p>When facing an ethical dilemma, follow these steps:</p>
         <ol>
@@ -68,7 +49,6 @@ const courseData = {
           <li><strong>Evaluate Consequences:</strong> Consider the impact on all stakeholders.</li>
           <li><strong>Consult Standards:</strong> Review the PNP Code of Conduct and applicable laws.</li>
           <li><strong>Make a Decision:</strong> Choose the action that aligns with your values and professional standards.</li>
-          <li><strong>Reflect:</strong> Review the outcome and learn from the experience.</li>
         </ol>
       `,
       completed: true,
@@ -81,16 +61,6 @@ const courseData = {
       content: `
         <h2>Accountability and Transparency</h2>
         <p>Accountability and transparency are core to maintaining public trust in law enforcement.</p>
-        <h3>What is Accountability?</h3>
-        <p>Accountability means being answerable for your actions and decisions. In policing, it involves:</p>
-        <ul>
-          <li>Clear responsibility for actions taken</li>
-          <li>Willingness to explain and justify decisions</li>
-          <li>Acceptance of consequences for misconduct</li>
-          <li>Commitment to improvement</li>
-        </ul>
-        <h3>Transparency in Operations</h3>
-        <p>Transparency builds public confidence by making police operations understandable and open to scrutiny within appropriate bounds.</p>
       `,
       completed: false,
     },
@@ -102,8 +72,6 @@ const courseData = {
       content: `
         <h2>Case Studies in Police Ethics</h2>
         <p>Real-world scenarios help us understand how to apply ethical principles in practice.</p>
-        <h3>Case Study 1: The Dilemma of Loyalty vs. Justice</h3>
-        <p>Scenario: You discover that a fellow officer, whom you've worked with for years, has been engaging in corruption...</p>
       `,
       completed: false,
     },
@@ -130,127 +98,149 @@ export default function CourseDetailPage({
   const [selectedModule, setSelectedModule] = useState(courseData.modules[0]);
 
   const completedCount = courseData.modules.filter((m) => m.completed).length;
+  const canAccessModule = (module: typeof courseData.modules[0]) => {
+    return module.order === 1 || courseData.modules[module.order - 2]?.completed;
+  };
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => router.back()}
-        >
-          <ArrowLeft size={20} />
-        </Button>
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold text-foreground">{courseData.title}</h1>
-          <p className="text-muted-foreground mt-1">Instructor: {courseData.instructor}</p>
+      <div className="bg-gradient-to-r from-primary to-accent/50 text-white p-6 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <button onClick={() => router.back()} className="hover:opacity-80 transition-opacity">
+            <ArrowLeft size={24} />
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold">{courseData.title}</h1>
+            <p className="text-primary-foreground/90 text-sm">Progress: {completedCount} of {courseData.modules.length} modules completed</p>
+          </div>
         </div>
+        <Button variant="outline" className="bg-white/20 border-white/30 text-white hover:bg-white/30">
+          ← Return to Courses
+        </Button>
       </div>
 
-      {/* Progress */}
-      <Card className="p-6">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-foreground">Course Progress</h3>
-          <span className="text-sm text-muted-foreground">
-            {completedCount} of {courseData.modules.length} modules
-          </span>
-        </div>
-        <Progress value={courseData.progress} className="h-3" />
-        <p className="text-xs text-muted-foreground mt-2">{courseData.progress}% complete</p>
-      </Card>
-
       {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Module List */}
-        <div className="lg:col-span-1">
-          <Card className="p-4 h-fit sticky top-20">
-            <h3 className="font-semibold text-foreground mb-3">Modules</h3>
-            <div className="space-y-2">
-              {courseData.modules.map((module) => (
-                <button
-                  key={module.id}
-                  onClick={() => setSelectedModule(module)}
-                  className={`w-full text-left p-3 rounded-lg transition-colors ${
-                    selectedModule.id === module.id
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted hover:bg-muted/80 text-foreground'
-                  }`}
-                >
-                  <div className="flex items-start gap-2">
-                    {module.completed && (
-                      <CheckCircle size={16} className="flex-shrink-0 mt-0.5" />
-                    )}
-                    <div className="flex-1 text-sm">
-                      <p className="font-medium">Module {module.order}</p>
-                      <p className="text-xs opacity-75 line-clamp-2">{module.title}</p>
-                    </div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </Card>
-        </div>
-
-        {/* Module Content */}
-        <div className="lg:col-span-3">
-          <Card className="p-8">
-            <div className="mb-6">
-              <Badge variant="secondary" className="mb-3">
-                Module {selectedModule.order} of {courseData.modules.length}
-              </Badge>
-              <h2 className="text-2xl font-bold text-foreground mb-2">
-                {selectedModule.title}
-              </h2>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <Clock size={16} />
-                  Est. {selectedModule.estimatedDuration} minutes
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left Sidebar */}
+        <div className="w-80 bg-gradient-to-b from-primary/10 to-background border-r border-border overflow-y-auto">
+          <div className="p-6 space-y-6">
+            {/* Module Title Card */}
+            <div className="bg-gradient-to-br from-primary to-accent text-white p-4 rounded-lg">
+              <h2 className="text-lg font-bold mb-2">{selectedModule.title}</h2>
+              <div className="space-y-2">
+                <div className="w-full bg-white/20 h-2 rounded-full overflow-hidden">
+                  <div
+                    className="bg-white h-full transition-all"
+                    style={{ width: `${(completedCount / courseData.modules.length) * 100}%` }}
+                  />
                 </div>
-                {selectedModule.completed && (
-                  <Badge className="bg-green-100/20 text-green-700 border-0">
-                    Completed
-                  </Badge>
-                )}
+                <p className="text-sm font-semibold">
+                  {completedCount * Math.floor(100 / courseData.modules.length)}% COMPLETE
+                </p>
               </div>
             </div>
 
-            {/* Content */}
-            <div className="prose prose-sm max-w-none dark:prose-invert mb-8">
+            {/* Modules List */}
+            <div className="space-y-2">
+              {courseData.modules.map((module) => {
+                const isAccessible = canAccessModule(module);
+                const isCurrent = selectedModule.id === module.id;
+
+                return (
+                  <button
+                    key={module.id}
+                    onClick={() => isAccessible && setSelectedModule(module)}
+                    disabled={!isAccessible}
+                    className={`w-full text-left p-3 rounded-lg transition-all ${
+                      isCurrent
+                        ? 'bg-primary text-white shadow-lg'
+                        : isAccessible
+                        ? 'bg-card hover:bg-card/80 text-foreground'
+                        : 'bg-muted/30 text-muted-foreground cursor-not-allowed opacity-60'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 mt-0.5">
+                        {module.completed ? (
+                          <CheckCircle2 size={20} className="text-green-500" />
+                        ) : isAccessible ? (
+                          <div className="w-5 h-5 rounded-full border-2 border-current opacity-50" />
+                        ) : (
+                          <Lock size={20} />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm line-clamp-2">{module.title}</p>
+                        <p className="text-xs opacity-70 mt-1">{module.estimatedDuration} min</p>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col bg-background overflow-y-auto">
+          {/* Content Header */}
+          <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-8 border-b border-slate-700">
+            <p className="text-sm text-white/70 mb-2">Lesson {selectedModule.order} of {courseData.modules.length}</p>
+            <h1 className="text-4xl font-bold mb-4">{selectedModule.title}</h1>
+            <div className="w-24 h-1 bg-accent rounded" />
+          </div>
+
+          {/* Module Content */}
+          <div className="flex-1 p-8 overflow-y-auto">
+            <div className="max-w-4xl prose prose-invert">
               <div
-                className="space-y-4 text-foreground"
+                className="text-foreground space-y-4"
                 dangerouslySetInnerHTML={{ __html: selectedModule.content }}
               />
             </div>
+          </div>
 
-            {/* Actions */}
-            <div className="flex gap-4 pt-6 border-t border-border">
-              <Button variant="outline" disabled={selectedModule.order === 1}>
-                Previous Module
-              </Button>
-              {!selectedModule.completed ? (
-                <Button className="flex-1" onClick={() => {
-                  // Mark as complete
-                  setSelectedModule({ ...selectedModule, completed: true });
-                }}>
-                  Mark as Complete
-                </Button>
-              ) : (
-                <Button
-                  className="flex-1"
-                  onClick={() => router.push(`/exams/${selectedModule.id}`)}
-                >
-                  Take Module Exam
-                </Button>
-              )}
+          {/* Module Actions */}
+          <div className="border-t border-border bg-card p-6 flex gap-4">
+            <Button
+              variant="outline"
+              disabled={selectedModule.order === 1}
+              onClick={() => {
+                const prevModule = courseData.modules[selectedModule.order - 2];
+                if (prevModule) setSelectedModule(prevModule);
+              }}
+            >
+              ← Previous
+            </Button>
+
+            <div className="flex-1" />
+
+            {selectedModule.completed ? (
+              <Badge className="bg-green-500/20 text-green-700 border-green-500/30 px-4 py-2 text-sm">
+                ✓ Completed
+              </Badge>
+            ) : (
               <Button
-                variant="outline"
-                disabled={selectedModule.order === courseData.modules.length}
+                className="bg-primary hover:bg-primary/90"
+                onClick={() => setSelectedModule({ ...selectedModule, completed: true })}
               >
-                Next Module
+                <Play size={16} className="mr-2" />
+                Mark as Complete
               </Button>
-            </div>
-          </Card>
+            )}
+
+            <Button
+              variant="outline"
+              disabled={selectedModule.order === courseData.modules.length || !selectedModule.completed}
+              onClick={() => {
+                const nextModule = courseData.modules[selectedModule.order];
+                if (nextModule) setSelectedModule(nextModule);
+              }}
+            >
+              Next →
+            </Button>
+          </div>
         </div>
       </div>
     </div>
