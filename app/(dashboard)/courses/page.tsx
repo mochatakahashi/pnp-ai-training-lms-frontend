@@ -109,8 +109,8 @@ export default function CoursesPage() {
           onClick={() => setFilterTab('all')}
           className={`px-4 py-2 rounded-full font-medium transition-all ${
             filterTab === 'all'
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-secondary text-foreground hover:bg-secondary/80'
+              ? 'bg-primary text-white'
+              : 'bg-secondary text-white hover:bg-secondary/80'
           }`}
         >
           All
@@ -119,8 +119,8 @@ export default function CoursesPage() {
           onClick={() => setFilterTab('enrolled')}
           className={`px-4 py-2 rounded-full font-medium transition-all ${
             filterTab === 'enrolled'
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-secondary text-foreground hover:bg-secondary/80'
+              ? 'bg-primary text-white'
+              : 'bg-secondary text-white hover:bg-secondary/80'
           }`}
         >
           Enrolled
@@ -129,8 +129,8 @@ export default function CoursesPage() {
           onClick={() => setFilterTab('available')}
           className={`px-4 py-2 rounded-full font-medium transition-all ${
             filterTab === 'available'
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-secondary text-foreground hover:bg-secondary/80'
+              ? 'bg-primary text-white'
+              : 'bg-secondary text-white hover:bg-secondary/80'
           }`}
         >
           Available
@@ -139,8 +139,8 @@ export default function CoursesPage() {
           onClick={() => setFilterTab('completed')}
           className={`px-4 py-2 rounded-full font-medium transition-all ${
             filterTab === 'completed'
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-secondary text-foreground hover:bg-secondary/80'
+              ? 'bg-primary text-white'
+              : 'bg-secondary text-white hover:bg-secondary/80'
           }`}
         >
           Completed
