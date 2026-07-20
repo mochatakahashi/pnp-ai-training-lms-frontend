@@ -11,7 +11,7 @@ export default function DashboardLayout({
       <Sidebar userRole="student" />
       
       <div className="flex-1 flex flex-col md:ml-64">
-        <Topbar userName="Maria Cruz" />
+        <Topbar />
         
         <main className="flex-1 overflow-auto pt-16 p-4 md:p-8">
           {children}
