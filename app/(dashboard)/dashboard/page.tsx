@@ -62,9 +62,9 @@ export default function DashboardPage() {
       <div className="relative rounded-2xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/20 p-8 overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-3xl -z-0" />
         <div className="relative z-10">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Welcome back, Maria</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-2">Welcome Officer</h1>
           <p className="text-lg text-muted-foreground max-w-2xl">
-            You&apos;re making great progress on your training journey. Keep up the excellent work!
+            Continue your professional development with our training modules and certification programs.
           </p>
           <div className="mt-6 flex items-center gap-2">
             <Zap className="w-4 h-4 text-accent" />

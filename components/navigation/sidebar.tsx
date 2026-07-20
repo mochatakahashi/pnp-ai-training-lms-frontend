@@ -16,11 +16,11 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
-const studentItems = [
+const officerItems = [
   { href: '/dashboard', label: 'Dashboard', icon: Home },
   { href: '/courses', label: 'Courses', icon: BookOpen },
-  { href: '/exams', label: 'Exams', icon: ClipboardList },
   { href: '/certificates', label: 'Certificates', icon: Award },
+  { href: '/verification', label: 'Verification', icon: ClipboardList },
 ];
 
 const adminItems = [
@@ -40,7 +40,7 @@ export function Sidebar({ userRole = 'student' }: SidebarProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
-  const items = userRole === 'admin' ? adminItems : studentItems;
+  const items = userRole === 'admin' ? adminItems : officerItems;
 
   return (
     <>
