@@ -2,6 +2,7 @@ import { Sidebar } from '@/components/navigation/sidebar';
 import { Topbar } from '@/components/navigation/topbar';
 import { SidebarProvider } from '@/components/navigation/sidebar-context';
 import { DashboardContent } from '@/components/navigation/dashboard-content';
+import { FloatingMenuButton } from '@/components/navigation/floating-menu-button';
 
 export default function DashboardLayout({
   children,
@@ -10,6 +11,7 @@ export default function DashboardLayout({
 }) {
   return (
     <SidebarProvider>
+      <FloatingMenuButton />
       <div className="flex h-screen bg-background">
         <Sidebar userRole="student" />
         
