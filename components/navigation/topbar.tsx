@@ -5,12 +5,14 @@ import { Bell, SearchIcon, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { useSidebar } from './sidebar-context';
 
 interface TopbarProps {
   userName?: string;
 }
 
 export function Topbar({ userName }: TopbarProps) {
+  const { isOpen } = useSidebar();
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications] = useState([
     { id: 1, message: 'New course available: Advanced Crisis Management', time: '2 hours ago' },
@@ -19,7 +21,7 @@ export function Topbar({ userName }: TopbarProps) {
   ]);
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-16 bg-card border-b border-border flex items-center justify-between px-6 z-30">
+    <header className={`fixed top-0 right-0 h-16 bg-card border-b border-border flex items-center justify-between px-6 z-30 transition-all duration-300 ${isOpen ? 'md:left-64' : 'md:left-0'}`}>
       {/* Search Bar */}
       <div className="hidden md:flex flex-1 max-w-sm">
         <div className="relative w-full">

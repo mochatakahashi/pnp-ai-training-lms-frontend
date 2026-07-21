@@ -12,7 +12,7 @@ import {
   Menu,
   X,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useSidebar } from './sidebar-context';
 
 const officerItems = [
   { href: '/dashboard', label: 'Dashboard', icon: Home },
@@ -36,7 +36,7 @@ interface SidebarProps {
 
 export function Sidebar({ userRole = 'student' }: SidebarProps) {
   const pathname = usePathname();
-  const [isOpen, setIsOpen] = useState(true);
+  const { isOpen, setIsOpen } = useSidebar();
 
   const items = userRole === 'admin' ? adminItems : officerItems;
 
