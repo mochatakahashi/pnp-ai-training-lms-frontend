@@ -43,7 +43,7 @@ export function Sidebar({ userRole = 'student' }: SidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed left-0 top-0 h-screen w-64 bg-gradient-to-b from-card to-card/50 border-r border-border transition-transform duration-300 z-40 flex flex-col',
+          'fixed left-0 top-0 h-screen w-64 bg-gradient-to-b from-card to-card/50 border-r border-border transition-transform duration-300 z-20 flex flex-col',
           isOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
@@ -91,7 +91,7 @@ export function Sidebar({ userRole = 'student' }: SidebarProps) {
       {/* Overlay on mobile */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          className="fixed inset-0 bg-black/50 z-25 md:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}

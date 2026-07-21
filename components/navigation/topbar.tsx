@@ -21,21 +21,21 @@ export function Topbar({ userName }: TopbarProps) {
   ]);
 
   return (
-    <header className={`fixed top-0 right-0 h-16 bg-card border-b border-border flex items-center justify-between px-6 z-30 transition-all duration-300 ${isOpen ? 'md:left-64' : 'md:left-0'}`}>
+    <header className={`fixed top-0 right-0 h-16 bg-card border-b border-border flex items-center justify-between px-6 z-40 transition-all duration-300 ${isOpen ? 'md:left-64' : 'md:left-0'}`}>
       {/* Search Bar */}
-      <div className="hidden md:flex flex-1 max-w-sm">
+      <div className="hidden md:flex flex-1 max-w-md pr-6">
         <div className="relative w-full">
           <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
           <Input
             type="text"
             placeholder="Search courses, exams..."
-            className="pl-10 bg-muted border-muted-foreground/20"
+            className="pl-10 pr-4 bg-muted border-muted-foreground/20 w-full"
           />
         </div>
       </div>
 
       {/* Right Actions */}
-      <div className="flex items-center gap-4 md:gap-6 ml-auto">
+      <div className="flex items-center gap-4 md:gap-6 flex-shrink-0">
         {/* Notification Bell */}
         <div className="relative">
           <button
