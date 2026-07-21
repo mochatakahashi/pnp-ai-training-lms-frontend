@@ -21,7 +21,7 @@ export function Topbar({ userName }: TopbarProps) {
   ]);
 
   return (
-    <header className={`fixed top-0 right-0 h-16 bg-card border-b border-border flex items-center justify-between px-6 z-40 transition-all duration-300 ${isOpen ? 'md:left-64' : 'md:left-0'}`}>
+    <header className={`fixed top-0 right-0 h-16 bg-card border-b border-border flex items-center justify-between px-6 pl-20 z-40 transition-all duration-300 ${isOpen ? 'md:left-64' : 'md:left-0'}`}>
       {/* Search Bar */}
       <div className="hidden md:flex flex-1 max-w-md pr-6">
         <div className="relative w-full">

@@ -9,7 +9,7 @@ export function FloatingMenuButton() {
   return (
     <button
       onClick={() => setIsOpen(!isOpen)}
-      className="fixed top-4 left-4 z-35 p-2 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 shadow-lg"
+      className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 shadow-lg pointer-events-auto"
       aria-label="Toggle sidebar"
     >
       {isOpen ? (
