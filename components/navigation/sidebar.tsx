@@ -36,7 +36,7 @@ interface SidebarProps {
 
 export function Sidebar({ userRole = 'student' }: SidebarProps) {
   const pathname = usePathname();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   const items = userRole === 'admin' ? adminItems : officerItems;
 
@@ -46,8 +46,7 @@ export function Sidebar({ userRole = 'student' }: SidebarProps) {
       <aside
         className={cn(
           'fixed left-0 top-0 h-screen w-64 bg-gradient-to-b from-card to-card/50 border-r border-border transition-transform duration-300 z-40 flex flex-col',
-          'md:translate-x-0',
-          isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+          isOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
         {/* Logo with Toggle */}
