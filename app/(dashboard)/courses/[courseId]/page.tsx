@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Menu, X, CheckCircle2, Play } from 'lucide-react';
+import { CheckCircle2, Play } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -97,7 +97,6 @@ export default function CourseDetailPage({
   const router = useRouter();
   const [selectedModule, setSelectedModule] = useState(courseData.modules[0]);
   const [modules, setModules] = useState(courseData.modules);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const completedCount = modules.filter((m) => m.completed).length;
 
@@ -109,14 +108,9 @@ export default function CourseDetailPage({
     <div className="h-screen bg-background flex flex-col">
       {/* Header */}
       <div className="bg-gradient-to-r from-primary to-accent/50 text-white px-8 py-6 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="hover:opacity-80 transition-opacity">
-            {sidebarOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-          <div>
-            <h1 className="text-2xl font-bold">{courseData.title}</h1>
-            <p className="text-primary-foreground/90 text-sm">Progress: {completedCount} of {courseData.modules.length} modules completed</p>
-          </div>
+        <div>
+          <h1 className="text-2xl font-bold">{courseData.title}</h1>
+          <p className="text-primary-foreground/90 text-sm">Progress: {completedCount} of {courseData.modules.length} modules completed</p>
         </div>
         <Button 
           onClick={() => router.push('/courses')}
@@ -129,7 +123,7 @@ export default function CourseDetailPage({
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left Sidebar */}
-        <div className={`${sidebarOpen ? 'w-80' : 'w-0'} bg-gradient-to-b from-primary/10 to-background border-r border-border overflow-y-auto transition-all duration-300`}>
+        <div className="w-80 bg-gradient-to-b from-primary/10 to-background border-r border-border overflow-y-auto">
           <div className="p-6 space-y-6">
             {/* Module Title Card */}
             <div className="bg-gradient-to-br from-primary to-accent text-white p-4 rounded-lg">

@@ -42,14 +42,6 @@ export function Sidebar({ userRole = 'student' }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile Toggle */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-4 left-4 z-50 md:hidden bg-primary text-primary-foreground p-2 rounded-lg"
-      >
-        {isOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
-
       {/* Sidebar */}
       <aside
         className={cn(
@@ -58,15 +50,23 @@ export function Sidebar({ userRole = 'student' }: SidebarProps) {
           isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         )}
       >
-        {/* Logo */}
-        <div className="p-6 border-b border-border/50 bg-gradient-to-r from-primary/10 to-accent/5">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+        {/* Logo with Toggle */}
+        <div className="p-6 border-b border-border/50 bg-gradient-to-r from-primary/10 to-accent/5 flex items-start justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
               <span className="text-lg font-bold text-primary-foreground">📚</span>
             </div>
-            <h1 className="text-lg font-bold text-foreground">PNP LMS</h1>
+            <div>
+              <h1 className="text-lg font-bold text-foreground">PNP LMS</h1>
+              <p className="text-xs text-muted-foreground">Philippine National Police</p>
+            </div>
           </div>
-          <p className="text-xs text-muted-foreground">Philippine National Police</p>
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="p-1 hover:bg-secondary/50 rounded-lg transition-colors flex-shrink-0"
+          >
+            {isOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
         </div>
 
         {/* Navigation */}
