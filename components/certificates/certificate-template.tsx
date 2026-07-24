@@ -12,6 +12,8 @@ interface CertificateTemplateProps {
   issueDate: string;
   certificateCode: string;
   instructorName?: string;
+  score?: number;
+  completionDate?: string;
 }
 
 export function CertificateTemplate({
@@ -20,6 +22,8 @@ export function CertificateTemplate({
   issueDate,
   certificateCode,
   instructorName = 'Philippine National Police Training Division',
+  score,
+  completionDate,
 }: CertificateTemplateProps) {
   const certificateRef = useRef<HTMLDivElement>(null);
 
@@ -118,6 +122,11 @@ export function CertificateTemplate({
             demonstrating proficiency in the subject matter and commitment to
             professional development.
           </p>
+          {score !== undefined && (
+            <p className="text-gray-600 text-sm mt-2">
+              <strong>Final Score:</strong> {score}%
+            </p>
+          )}
         </div>
 
         {/* Footer */}
@@ -132,6 +141,11 @@ export function CertificateTemplate({
 
           {/* Date and Certificate Code */}
           <div className="text-center">
+            {completionDate && (
+              <p className="text-xs text-gray-600 mb-1">
+                <strong>Completed:</strong> {completionDate}
+              </p>
+            )}
             <p className="text-xs text-gray-600 mb-2">
               <strong>Issued:</strong> {issueDate}
             </p>
