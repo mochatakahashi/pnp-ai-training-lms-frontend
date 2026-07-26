@@ -90,7 +90,7 @@ export default function AdminStudentsPage() {
   const avgProgress = Math.round(students.reduce((sum, s) => sum + s.overallProgress, 0) / students.length);
 
   return (
-    <div className="space-y-8">
+    <div className="p-6 md:p-8 space-y-8 max-w-7xl mx-auto">
       {/* Header */}
       <div>
         <h1 className="text-4xl font-bold text-foreground">Manage Students</h1>

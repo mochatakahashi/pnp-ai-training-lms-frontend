@@ -9,6 +9,8 @@ import {
   ClipboardList,
   Award,
   BarChart3,
+  Users,
+  ShieldAlert,
 } from 'lucide-react';
 import { useSidebar } from './sidebar-context';
 
@@ -20,11 +22,11 @@ const officerItems = [
 ];
 
 const adminItems = [
-  { href: '/admin', label: 'Dashboard', icon: Home },
-  { href: '/admin/courses', label: 'Manage Courses', icon: BookOpen },
-  { href: '/admin/students', label: 'Manage Students', icon: BarChart3 },
-  { href: '/admin/exams', label: 'Monitor Exams', icon: ClipboardList },
-  { href: '/admin/certificates', label: 'Monitor Certificates', icon: Award },
+  { href: '/admin', label: 'Admin Dashboard', icon: Home },
+  { href: '/admin/courses', label: 'Manage Courses & Modules', icon: BookOpen },
+  { href: '/admin/students', label: 'Monitor Officers', icon: Users },
+  { href: '/admin/exams', label: 'Exam & Content Settings', icon: ClipboardList },
+  { href: '/admin/certificates', label: 'Certificates Log', icon: Award },
   { href: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
 ];
 
@@ -36,7 +38,8 @@ export function Sidebar({ userRole = 'student' }: SidebarProps) {
   const pathname = usePathname();
   const { isOpen, setIsOpen } = useSidebar();
 
-  const items = userRole === 'admin' ? adminItems : officerItems;
+  const isAdmin = pathname.startsWith('/admin') || userRole === 'admin';
+  const items = isAdmin ? adminItems : officerItems;
 
   return (
     <>
@@ -55,7 +58,9 @@ export function Sidebar({ userRole = 'student' }: SidebarProps) {
             </div>
             <div>
               <h1 className="text-lg font-bold text-foreground">PNP LMS</h1>
-              <p className="text-xs text-muted-foreground">Philippine National Police</p>
+              <p className="text-xs text-muted-foreground">
+                {isAdmin ? '🛡️ Administrator Portal' : 'Philippine National Police'}
+              </p>
             </div>
           </div>
         </div>
@@ -64,7 +69,7 @@ export function Sidebar({ userRole = 'student' }: SidebarProps) {
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {items.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname.startsWith(item.href);
+            const isActive = pathname === item.href || (item.href !== '/admin' && item.href !== '/dashboard' && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}
@@ -78,14 +83,22 @@ export function Sidebar({ userRole = 'student' }: SidebarProps) {
                 )}
               >
                 <Icon size={20} className={isActive ? '' : 'group-hover:scale-110 transition-transform'} />
-                <span className="font-medium">{item.label}</span>
+                <span className="font-medium text-sm">{item.label}</span>
                 {isActive && <div className="ml-auto w-2 h-2 rounded-full bg-primary-foreground" />}
               </Link>
             );
           })}
         </nav>
 
-
+        {/* Mode Switcher Footer */}
+        <div className="p-4 border-t border-border/50 bg-secondary/20">
+          <Link href={isAdmin ? '/dashboard' : '/admin'}>
+            <button className="w-full p-2.5 rounded-lg border border-border bg-card hover:bg-secondary transition-all text-xs font-semibold flex items-center justify-center gap-2 text-foreground shadow-xs">
+              <ShieldAlert size={14} className="text-primary" />
+              Switch to {isAdmin ? 'Officer Portal' : 'Admin Portal'}
+            </button>
+          </Link>
+        </div>
       </aside>
 
       {/* Overlay on mobile */}

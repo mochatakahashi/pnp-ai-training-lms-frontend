@@ -57,7 +57,7 @@ const statistics = [
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-8">
+    <div className="p-6 md:p-8 space-y-8">
       {/* Welcome Section with Background */}
       <div className="relative rounded-2xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/20 p-8 overflow-hidden">
         <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-3xl -z-0" />

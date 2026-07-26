@@ -1,83 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { ExamForm } from '@/components/exams/exam-form';
-import { ResultsSummary } from '@/components/exams/results-summary';
+import { CourseExam } from '@/components/exams/course-exam';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { AlertCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { AlertCircle, Award, CheckCircle2, ShieldAlert } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-
-// Mock exam data
-const mockExam = {
-  id: 'exam-1',
-  title: 'Introduction to Ethics - Quiz',
-  moduleId: 'mod1',
-  duration: 15,
-  passingScore: 70,
-  questions: [
-    {
-      id: 'q1',
-      questionText: 'What is the primary purpose of professional ethics in policing?',
-      questionType: 'multiple_choice' as const,
-      options: [
-        'To provide guidelines for fair and impartial service to all citizens',
-        'To maximize police department efficiency',
-        'To increase arrest rates',
-        'To simplify police procedures',
-      ],
-      correctAnswer: 'A',
-      points: 1,
-      order: 1,
-    },
-    {
-      id: 'q2',
-      questionText: 'Which of the following is NOT one of the PNP Core Values?',
-      questionType: 'multiple_choice' as const,
-      options: [
-        'Integrity',
-        'Accountability',
-        'Profit maximization',
-        'Transparency',
-      ],
-      correctAnswer: 'C',
-      points: 1,
-      order: 2,
-    },
-    {
-      id: 'q3',
-      questionText: 'Describe the first step in the ethical decision-making framework.',
-      questionType: 'essay' as const,
-      points: 2,
-      order: 3,
-    },
-    {
-      id: 'q4',
-      questionText:
-        'Public trust in law enforcement is primarily built on which two elements?',
-      questionType: 'multiple_choice' as const,
-      options: [
-        'Technology and resources',
-        'Accountability and transparency',
-        'Political connections',
-        'Military training',
-      ],
-      correctAnswer: 'B',
-      points: 1,
-      order: 4,
-    },
-    {
-      id: 'q5',
-      questionText:
-        'What does it mean to be accountable in a policing context?',
-      questionType: 'essay' as const,
-      points: 2,
-      order: 5,
-    },
-  ],
-};
-
-type ExamState = 'instructions' | 'taking' | 'results';
+import { COMPREHENSIVE_50_QUESTIONS } from '@/lib/final-exam-questions';
 
 export default function ExamPage({
   params,
@@ -85,130 +15,79 @@ export default function ExamPage({
   params: { examId: string };
 }) {
   const router = useRouter();
-  const [state, setState] = useState<ExamState>('instructions');
-  const [results, setResults] = useState<{
-    score: number;
-    correctAnswers: number;
-    totalQuestions: number;
-    timeSpent: number;
-  } | null>(null);
+  const [hasStarted, setHasStarted] = useState(false);
 
-  const handleStartExam = () => {
-    setState('taking');
+  const handleComplete = (score: number, passed: boolean) => {
+    if (passed) {
+      router.push('/certificates');
+    } else {
+      router.push('/courses/1');
+    }
   };
 
-  const handleSubmitExam = (answers: Record<string, string>) => {
-    // Calculate score
-    let correctCount = 0;
-    const totalPoints = mockExam.questions.reduce((sum, q) => sum + q.points, 0);
-    let earnedPoints = 0;
-
-    mockExam.questions.forEach((question) => {
-      const answer = answers[question.id];
-      if (question.questionType === 'multiple_choice') {
-        if (answer && answer === question.correctAnswer) {
-          correctCount++;
-          earnedPoints += question.points;
-        }
-      } else {
-        // For essay questions, simulate grading (in real app, instructor would grade)
-        if (answer && answer.trim().length > 10) {
-          correctCount++;
-          earnedPoints += question.points;
-        }
-      }
-    });
-
-    const score = Math.round((earnedPoints / totalPoints) * 100);
-
-    setResults({
-      score,
-      correctAnswers: correctCount,
-      totalQuestions: mockExam.questions.length,
-      timeSpent: 480, // 8 minutes (mock)
-    });
-
-    setState('results');
-  };
-
-  const handleCancelExam = () => {
-    router.back();
-  };
-
-  if (state === 'instructions') {
+  if (!hasStarted) {
     return (
-      <div className="max-w-2xl mx-auto py-8">
-        <Card className="p-8">
-          <h1 className="text-3xl font-bold text-foreground mb-6">
-            {mockExam.title}
+      <div className="max-w-3xl mx-auto py-8 space-y-6">
+        <Card className="p-8 border-2 border-primary/20 bg-card shadow-xl">
+          <div className="flex items-center gap-3 mb-4">
+            <Badge className="bg-primary/20 text-primary border-primary/30 px-3 py-1 font-semibold text-xs">
+              Official PNP Course Final Exam
+            </Badge>
+            <Badge className="bg-amber-500/20 text-amber-600 border-amber-500/30 px-3 py-1 font-semibold text-xs">
+              Passing Number: 80% (40/50)
+            </Badge>
+          </div>
+
+          <h1 className="text-3xl font-extrabold text-foreground mb-3">
+            Police Ethics and Conduct - Comprehensive Final Exam
           </h1>
+          <p className="text-sm text-muted-foreground mb-6">
+            This comprehensive 50-question examination tests your mastery of the PNP Code of Conduct, Ethical Decision Making Framework, Accountability, Transparency, and Legal Operational Guidelines.
+          </p>
 
-          {/* Exam Details */}
-          <div className="space-y-6 mb-8">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 bg-muted rounded-lg">
-                <p className="text-sm text-muted-foreground mb-1">Duration</p>
-                <p className="text-2xl font-bold text-foreground">
-                  {mockExam.duration} minutes
-                </p>
-              </div>
-              <div className="p-4 bg-muted rounded-lg">
-                <p className="text-sm text-muted-foreground mb-1">Passing Score</p>
-                <p className="text-2xl font-bold text-foreground">
-                  {mockExam.passingScore}%
-                </p>
-              </div>
+          {/* Exam Requirements Box */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="p-4 bg-secondary/50 rounded-xl border border-border text-center">
+              <p className="text-xs text-muted-foreground mb-1">Total Questions</p>
+              <p className="text-2xl font-bold text-foreground">50 Questions</p>
             </div>
-
-            <div className="p-4 bg-muted rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">Total Questions</p>
-              <p className="text-2xl font-bold text-foreground">
-                {mockExam.questions.length}
-              </p>
+            <div className="p-4 bg-secondary/50 rounded-xl border border-border text-center">
+              <p className="text-xs text-muted-foreground mb-1">Passing Threshold</p>
+              <p className="text-2xl font-bold text-primary">80% Required</p>
+            </div>
+            <div className="p-4 bg-secondary/50 rounded-xl border border-border text-center">
+              <p className="text-xs text-muted-foreground mb-1">Duration Limit</p>
+              <p className="text-2xl font-bold text-foreground">2 Hours (120 mins)</p>
             </div>
           </div>
 
-          {/* Instructions */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
-            <h2 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-              <AlertCircle size={20} className="text-blue-600" />
-              Exam Instructions
-            </h2>
-            <ul className="space-y-2 text-sm text-foreground list-disc list-inside">
-              <li>You have {mockExam.duration} minutes to complete this exam.</li>
-              <li>Answer all questions to the best of your ability.</li>
-              <li>
-                Some questions are multiple choice and some require essay responses.
-              </li>
-              <li>You can flag questions to review them later.</li>
-              <li>Once you submit, you cannot change your answers.</li>
-              <li>You must maintain focus on this window during the exam.</li>
-              <li>Cheating or academic dishonesty will result in exam failure.</li>
+          {/* Guidelines */}
+          <div className="p-5 bg-blue-500/10 border border-blue-500/20 rounded-xl space-y-3 mb-8">
+            <h3 className="font-semibold text-sm text-primary flex items-center gap-2">
+              <AlertCircle size={18} />
+              Important Examination Guidelines
+            </h3>
+            <ul className="space-y-1.5 text-xs text-muted-foreground list-disc list-inside">
+              <li>You have <strong>2 Hours (120 minutes)</strong> to complete all 50 questions.</li>
+              <li>You must achieve at least <strong>80% (40 out of 50 correct answers)</strong> to pass this final assessment.</li>
+              <li>You can flag questions to review them before submitting.</li>
+              <li>Achieving 80% or higher unlocks your official PNP Certificate of Completion.</li>
             </ul>
           </div>
 
-          {/* Terms */}
-          <div className="mb-8">
-            <label className="flex items-start gap-3 p-4 border border-border rounded-lg hover:bg-muted transition-colors cursor-pointer">
-              <input type="checkbox" className="mt-1" defaultChecked />
-              <span className="text-sm text-foreground">
-                I understand and agree to the exam terms and conditions. I will
-                complete this exam honestly and without assistance.
-              </span>
-            </label>
-          </div>
-
-          {/* Actions */}
-          <div className="flex gap-4">
+          <div className="flex items-center gap-4">
             <Button
               variant="outline"
-              onClick={handleCancelExam}
-              className="flex-1"
+              onClick={() => router.back()}
+              className="flex-1 text-sm font-semibold h-11"
             >
-              Cancel
+              ← Back to Course
             </Button>
-            <Button onClick={handleStartExam} className="flex-1">
-              Start Exam
+            <Button
+              onClick={() => setHasStarted(true)}
+              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-bold h-11 text-base shadow-md"
+            >
+              Start 50-Question Exam Now →
             </Button>
           </div>
         </Card>
@@ -216,40 +95,16 @@ export default function ExamPage({
     );
   }
 
-  if (state === 'taking') {
-    return (
-      <div className="space-y-6">
-        <ExamForm
-          examId={mockExam.id}
-          examTitle={mockExam.title}
-          duration={mockExam.duration}
-          passingScore={mockExam.passingScore}
-          questions={mockExam.questions}
-          onSubmit={handleSubmitExam}
-          onCancel={handleCancelExam}
-        />
-      </div>
-    );
-  }
-
-  if (state === 'results' && results) {
-    return (
-      <div className="space-y-6">
-        <ResultsSummary
-          examTitle={mockExam.title}
-          score={results.score}
-          passingScore={mockExam.passingScore}
-          totalQuestions={results.totalQuestions}
-          correctAnswers={results.correctAnswers}
-          timeSpent={results.timeSpent}
-          passed={results.score >= mockExam.passingScore}
-          certificateId={
-            results.score >= mockExam.passingScore ? 'cert-001' : undefined
-          }
-        />
-      </div>
-    );
-  }
-
-  return null;
+  return (
+    <div className="max-w-4xl mx-auto py-6">
+      <CourseExam
+        courseId="1"
+        courseName="Police Ethics and Conduct (50 Questions)"
+        questions={COMPREHENSIVE_50_QUESTIONS}
+        durationMinutes={120}
+        passingScore={80}
+        onComplete={handleComplete}
+      />
+    </div>
+  );
 }

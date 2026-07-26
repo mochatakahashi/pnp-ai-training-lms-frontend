@@ -94,7 +94,7 @@ export default function CoursesPage() {
   const completedCount = allCourses.filter((c) => c.status === 'completed').length;
 
   return (
-    <div className="space-y-8">
+    <div className="p-6 md:p-8 space-y-8">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-foreground mb-2">Courses</h1>

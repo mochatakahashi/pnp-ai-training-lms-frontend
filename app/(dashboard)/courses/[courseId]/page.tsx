@@ -5,15 +5,16 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, Play } from 'lucide-react';
+import { CheckCircle2, Play, Award, FileText, HelpCircle, ArrowRight, Lock, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { MODULE_QUIZZES } from '@/lib/module-quizzes';
+import { ModuleQuiz } from '@/components/exams/module-quiz';
 
-const courseData = {
+const initialCourseData = {
   id: '1',
   title: 'Police Ethics and Conduct',
   description: 'Learn the fundamental principles of professional ethics and conduct in policing.',
-  progress: 65,
   modules: [
     {
       id: 'mod1',
@@ -21,13 +22,13 @@ const courseData = {
       order: 1,
       estimatedDuration: 20,
       content: `
-        <h2>Introduction to Ethics</h2>
-        <p>Ethics is the foundation of professional policing. Understanding and practicing ethical conduct is essential for maintaining public trust and upholding the law.</p>
+        <h2>Introduction to Ethics in Law Enforcement</h2>
+        <p>Ethics forms the core of effective, constitutional policing. Understanding and practicing ethical conduct is essential for building and preserving public trust and upholding the laws of the Republic of the Philippines.</p>
         <h3>Key Topics:</h3>
         <ul>
-          <li><strong>Definition of Ethics:</strong> The principles concerning the distinction between right and wrong behavior.</li>
-          <li><strong>Professional Ethics:</strong> Standards of conduct specific to law enforcement professionals.</li>
-          <li><strong>Code of Conduct:</strong> The PNP Code of Professional Conduct and its requirements.</li>
+          <li><strong>Definition of Ethics:</strong> Moral principles concerning the distinction between right and wrong behavior.</li>
+          <li><strong>Professional Ethics:</strong> Specialized standards of conduct governing law enforcement officers.</li>
+          <li><strong>PNP Code of Conduct:</strong> Ethical standards under R.A. 6713 and PNP Operational Guidelines.</li>
         </ul>
       `,
       completed: true,
@@ -39,19 +40,16 @@ const courseData = {
       estimatedDuration: 25,
       content: `
         <h2>Decision Making and Ethical Dilemmas</h2>
-        <p>Officers frequently face complex situations that require ethical decision-making.</p>
-        <h3>The Ethical Decision-Making Framework</h3>
-        <p>When facing an ethical dilemma, follow these steps:</p>
+        <p>Police officers frequently face high-pressure situations requiring rapid, sound ethical decision-making.</p>
+        <h3>The PNP Ethical Decision-Making Framework</h3>
         <ol>
-          <li><strong>Identify the Issue:</strong> Clearly define what makes this situation ethically challenging.</li>
-          <li><strong>Gather Information:</strong> Collect all relevant facts and context.</li>
-          <li><strong>Consider Options:</strong> Identify possible courses of action.</li>
-          <li><strong>Evaluate Consequences:</strong> Consider the impact on all stakeholders.</li>
-          <li><strong>Consult Standards:</strong> Review the PNP Code of Conduct and applicable laws.</li>
-          <li><strong>Make a Decision:</strong> Choose the action that aligns with your values and professional standards.</li>
+          <li><strong>Identify the Issue:</strong> Recognize the moral and legal challenge.</li>
+          <li><strong>Gather Facts:</strong> Assess circumstances without bias.</li>
+          <li><strong>Evaluate Options:</strong> Compare choices against PNP ethical guidelines and Philippine laws.</li>
+          <li><strong>Execute & Report:</strong> Take responsible action and document the incident accurately.</li>
         </ol>
       `,
-      completed: true,
+      completed: false,
     },
     {
       id: 'mod3',
@@ -60,7 +58,13 @@ const courseData = {
       estimatedDuration: 30,
       content: `
         <h2>Accountability and Transparency</h2>
-        <p>Accountability and transparency are core to maintaining public trust in law enforcement.</p>
+        <p>Accountability ensures officers remain answerable for their actions, while transparency builds citizen confidence in police operations.</p>
+        <h3>Core Principles:</h3>
+        <ul>
+          <li><strong>Truthful Reporting:</strong> Accurate logging of blotters and incident reports.</li>
+          <li><strong>Internal Affairs Oversight:</strong> Independent investigation of administrative violations.</li>
+          <li><strong>Body-Worn Camera Protocols:</strong> Maintaining objective digital records during tactical operations.</li>
+        </ul>
       `,
       completed: false,
     },
@@ -71,18 +75,24 @@ const courseData = {
       estimatedDuration: 35,
       content: `
         <h2>Case Studies in Police Ethics</h2>
-        <p>Real-world scenarios help us understand how to apply ethical principles in practice.</p>
+        <p>Analyzing real-world scenarios regarding anti-graft policies, proper use of force, and handling anti-corruption mandates.</p>
+        <h3>Key Case Scenarios:</h3>
+        <ul>
+          <li>Refusing gifts and gratuities under R.A. 6713.</li>
+          <li>Duty to intervene against excessive force.</li>
+          <li>Maintaining impartiality in local community policing.</li>
+        </ul>
       `,
       completed: false,
     },
     {
       id: 'mod5',
-      title: 'Professional Development and Continued Learning',
+      title: 'Professional Development & Continuing Education',
       order: 5,
       estimatedDuration: 20,
       content: `
-        <h2>Professional Development and Continued Learning</h2>
-        <p>Ethical conduct is an ongoing commitment that requires continuous learning and improvement.</p>
+        <h2>Professional Development & Continuing Education</h2>
+        <p>Continuous education keeps PNP personnel updated on human rights, modern technology, AI tools, and tactical ethics.</p>
       `,
       completed: false,
     },
@@ -95,147 +105,301 @@ export default function CourseDetailPage({
   params: { courseId: string };
 }) {
   const router = useRouter();
-  const [selectedModule, setSelectedModule] = useState(courseData.modules[0]);
-  const [modules, setModules] = useState(courseData.modules);
+  const [modules, setModules] = useState(initialCourseData.modules);
+  const [selectedModule, setSelectedModule] = useState(initialCourseData.modules[0]);
+  const [activeTab, setActiveTab] = useState<'content' | 'quiz'>('content');
+
+  // Helper to check if a module is unlocked (Module 1 is always unlocked; Module N requires Module N-1 to be completed)
+  const isModuleUnlocked = (moduleIndex: number) => {
+    if (moduleIndex === 0) return true;
+    return modules[moduleIndex - 1].completed;
+  };
 
   const completedCount = modules.filter((m) => m.completed).length;
+  const isCourseComplete = completedCount === modules.length;
 
-  const updateModuleCompletion = (moduleId: string, completed: boolean) => {
-    setModules(modules.map((m) => (m.id === moduleId ? { ...m, completed } : m)));
+  const handleModuleQuizComplete = (score: number, passed: boolean) => {
+    const currentIndex = modules.findIndex((m) => m.id === selectedModule.id);
+    
+    // Mark current module completed
+    const updatedModules = modules.map((m, idx) =>
+      idx === currentIndex ? { ...m, completed: true } : m
+    );
+    setModules(updatedModules);
+
+    // Automatically advance to the next unlocked module!
+    if (currentIndex < updatedModules.length - 1) {
+      setSelectedModule(updatedModules[currentIndex + 1]);
+    } else {
+      setSelectedModule(updatedModules[currentIndex]);
+    }
+    setActiveTab('content');
+  };
+
+  const currentModuleIndex = modules.findIndex((m) => m.id === selectedModule.id);
+  const currentQuizData = MODULE_QUIZZES[selectedModule.id] || {
+    title: `${selectedModule.title} Quiz`,
+    questions: [
+      {
+        id: `${selectedModule.id}_q1`,
+        question: `What is the primary key standard emphasized in ${selectedModule.title}?`,
+        options: ['Strict ethical compliance', 'Disregarding procedures', 'Speed over accuracy', 'None of the above'],
+        correctAnswer: 0,
+        explanation: 'Ethical compliance is the primary standard.',
+      },
+    ],
   };
 
   return (
-    <div className="h-screen bg-background flex flex-col">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-primary to-accent/50 text-white px-8 py-6 flex items-center justify-between">
+    <div className="h-[calc(100vh-4rem)] bg-background flex flex-col overflow-hidden">
+      {/* Visible Course Header Bar */}
+      <div className="bg-gradient-to-r from-slate-900 via-primary to-slate-900 text-white px-6 py-3.5 flex flex-wrap items-center justify-between gap-3 border-b border-border shadow-md flex-shrink-0">
         <div>
-          <h1 className="text-2xl font-bold">{courseData.title}</h1>
-          <p className="text-primary-foreground/90 text-sm">Progress: {completedCount} of {courseData.modules.length} modules completed</p>
+          <div className="flex items-center gap-2 mb-0.5">
+            <Badge className="bg-accent/20 text-accent-foreground border-accent/30 text-xs">Course Module Viewer</Badge>
+            <span className="text-xs text-white/70">• {completedCount} of {modules.length} Modules Completed</span>
+          </div>
+          <h1 className="text-xl font-bold">{initialCourseData.title}</h1>
         </div>
-        <Button 
-          onClick={() => router.push('/courses')}
-          className="bg-white/20 border-white/30 text-white hover:bg-white/30 border"
-        >
-          ← Return to Courses
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button 
+            onClick={() => router.push('/courses')}
+            variant="outline"
+            className="bg-white/10 border-white/20 text-white hover:bg-white/20 text-xs h-9"
+          >
+            ← Courses List
+          </Button>
+
+          {/* Final Exam Button: Unlocked only when ALL modules completed */}
+          {isCourseComplete ? (
+            <Button
+              onClick={() => router.push('/exams/exam-4')}
+              className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold text-xs flex items-center gap-1.5 shadow-lg animate-bounce h-9"
+            >
+              <Award className="w-4 h-4" />
+              Start 50-Question Final Exam (2 Hours)
+            </Button>
+          ) : (
+            <Button
+              disabled
+              variant="outline"
+              className="bg-white/5 border-white/10 text-white/50 text-xs flex items-center gap-1.5 cursor-not-allowed h-9"
+              title="Complete all modules & quizzes to unlock Final Assessment"
+            >
+              <Lock className="w-3.5 h-3.5" />
+              Final Exam Locked (2 Hours)
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left Sidebar */}
-        <div className="w-80 bg-gradient-to-b from-primary/10 to-background border-r border-border overflow-y-auto">
-          <div className="p-6 space-y-6">
-            {/* Module Title Card */}
-            <div className="bg-gradient-to-br from-primary to-accent text-white p-4 rounded-lg">
-              <h2 className="text-lg font-bold mb-2">{selectedModule.title}</h2>
-              <div className="space-y-2">
-                <div className="w-full bg-white/20 h-2 rounded-full overflow-hidden">
-                  <div
-                    className="bg-white h-full transition-all"
-                    style={{ width: `${(completedCount / courseData.modules.length) * 100}%` }}
-                  />
-                </div>
-                <p className="text-sm font-semibold">
-                  {completedCount * Math.floor(100 / courseData.modules.length)}% COMPLETE
-                </p>
+        <div className="w-72 bg-card border-r border-border overflow-y-auto flex flex-col">
+          <div className="p-4 space-y-4">
+            {/* Progress Card */}
+            <div className="bg-gradient-to-br from-primary to-primary/80 text-primary-foreground p-3.5 rounded-xl shadow-sm">
+              <p className="text-[10px] opacity-90 mb-0.5 font-semibold uppercase tracking-wider">Learning Progress</p>
+              <div className="flex items-baseline justify-between mb-1.5">
+                <span className="text-xl font-extrabold">{Math.round((completedCount / modules.length) * 100)}%</span>
+                <span className="text-xs opacity-80">{completedCount}/{modules.length} Done</span>
+              </div>
+              <div className="w-full bg-black/20 h-1.5 rounded-full overflow-hidden">
+                <div
+                  className="bg-white h-full transition-all duration-300"
+                  style={{ width: `${(completedCount / modules.length) * 100}%` }}
+                />
               </div>
             </div>
 
             {/* Modules List */}
-            <div className="space-y-2">
-              {modules.map((module) => {
+            <div className="space-y-1.5">
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1.5">Sequential Modules</p>
+              {modules.map((module, idx) => {
                 const isCurrent = selectedModule.id === module.id;
+                const unlocked = isModuleUnlocked(idx);
 
                 return (
                   <button
                     key={module.id}
-                    onClick={() => setSelectedModule(module)}
-                    className={`w-full text-left p-3 rounded-lg transition-all ${
-                      isCurrent
-                        ? 'bg-primary text-white shadow-lg'
-                        : 'bg-card hover:bg-card/80 text-foreground'
+                    disabled={!unlocked}
+                    onClick={() => {
+                      if (unlocked) {
+                        setSelectedModule(module);
+                        setActiveTab('content');
+                      }
+                    }}
+                    className={`w-full text-left p-3 rounded-xl border transition-all ${
+                      !unlocked
+                        ? 'bg-secondary/10 border-border/30 text-muted-foreground opacity-60 cursor-not-allowed'
+                        : isCurrent
+                        ? 'bg-primary text-primary-foreground border-primary shadow-md'
+                        : 'bg-secondary/30 hover:bg-secondary border-border/50 text-foreground'
                     }`}
                   >
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-start gap-2.5">
                       <div className="flex-shrink-0 mt-0.5">
-                        {module.completed ? (
-                          <CheckCircle2 size={20} className="text-green-500" />
+                        {!unlocked ? (
+                          <Lock size={14} className="text-amber-500" />
+                        ) : module.completed ? (
+                          <CheckCircle2 size={16} className={isCurrent ? 'text-white' : 'text-green-600'} />
                         ) : (
-                          <div className="w-5 h-5 rounded-full border-2 border-current opacity-50" />
+                          <div className={`w-3.5 h-3.5 rounded-full border-2 ${isCurrent ? 'border-white' : 'border-primary'}`} />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm line-clamp-2">{module.title}</p>
-                        <p className="text-xs opacity-70 mt-1">{module.estimatedDuration} min</p>
+                        <div className="flex items-center justify-between">
+                          <p className="font-semibold text-xs truncate">Mod {module.order}: {module.title}</p>
+                          {!unlocked && <Badge variant="outline" className="text-[8px] px-1 py-0 border-amber-500/40 text-amber-600">Locked</Badge>}
+                        </div>
+                        <p className={`text-[10px] mt-0.5 ${isCurrent ? 'opacity-90' : 'text-muted-foreground'}`}>
+                          {module.estimatedDuration} min • {unlocked ? 'Quiz Included' : `Requires Mod ${idx}`}
+                        </p>
                       </div>
                     </div>
                   </button>
                 );
               })}
             </div>
+
+            {/* Final Exam Status Card */}
+            <Card className={`p-3.5 border ${isCourseComplete ? 'bg-accent/10 border-accent/40' : 'bg-muted/40 border-border opacity-80'} space-y-2`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 font-bold text-xs">
+                  <Award className="w-4 h-4 text-accent" />
+                  Final Assessment
+                </div>
+                <Badge variant={isCourseComplete ? 'default' : 'secondary'} className="text-[9px]">
+                  {isCourseComplete ? 'Unlocked ✓' : '🔒 Locked'}
+                </Badge>
+              </div>
+              <p className="text-[11px] text-muted-foreground leading-tight">
+                50 Questions • <strong>2 Hours Limit</strong> • 80% Pass Score.
+              </p>
+              {isCourseComplete ? (
+                <Link href="/exams/exam-4" className="block">
+                  <Button className="w-full bg-accent hover:bg-accent/90 text-accent-foreground text-xs font-bold h-8 shadow-sm">
+                    Start 2-Hour Final Exam →
+                  </Button>
+                </Link>
+              ) : (
+                <Button disabled className="w-full text-xs font-semibold h-8" variant="outline">
+                  Finish All {modules.length} Modules First
+                </Button>
+              )}
+            </Card>
           </div>
         </div>
 
-        {/* Main Content Area */}
-        <div className="flex-1 flex flex-col bg-background overflow-y-auto">
-          {/* Content Header */}
-          <div className="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-8 border-b border-slate-700">
-            <p className="text-sm text-white/70 mb-2">Lesson {selectedModule.order} of {courseData.modules.length}</p>
-            <h1 className="text-4xl font-bold mb-4">{selectedModule.title}</h1>
-            <div className="w-24 h-1 bg-accent rounded" />
-          </div>
-
-          {/* Module Content */}
-          <div className="flex-1 p-8 overflow-y-auto">
-            <div className="max-w-4xl prose prose-invert">
-              <div
-                className="text-foreground space-y-4"
-                dangerouslySetInnerHTML={{ __html: selectedModule.content }}
-              />
+        {/* Right Main Content Area */}
+        <div className="flex-1 flex flex-col bg-background overflow-hidden">
+          {/* Module Content Header Tabs */}
+          <div className="bg-card px-6 py-3 border-b border-border flex items-center justify-between flex-shrink-0">
+            <div>
+              <p className="text-[11px] text-muted-foreground">Module {selectedModule.order} of {modules.length}</p>
+              <h2 className="text-lg font-bold text-foreground">{selectedModule.title}</h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant={activeTab === 'content' ? 'default' : 'outline'}
+                onClick={() => setActiveTab('content')}
+                className="text-xs h-8 gap-1.5"
+              >
+                <FileText size={14} />
+                Reading Material
+              </Button>
+              <Button
+                size="sm"
+                variant={activeTab === 'quiz' ? 'default' : 'outline'}
+                onClick={() => setActiveTab('quiz')}
+                className="text-xs h-8 gap-1.5 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold"
+              >
+                <HelpCircle size={14} />
+                Module Quiz ({currentQuizData.questions.length} Qs)
+              </Button>
             </div>
           </div>
 
-          {/* Module Actions */}
-          <div className="border-t border-border bg-card p-6 flex gap-4">
+          {/* Tab Body */}
+          <div className="flex-1 p-6 overflow-y-auto">
+            {activeTab === 'content' ? (
+              <div className="max-w-3xl space-y-6">
+                <div
+                  className="prose prose-slate dark:prose-invert max-w-none text-foreground leading-relaxed space-y-4 text-sm"
+                  dangerouslySetInnerHTML={{ __html: selectedModule.content }}
+                />
+
+                <Card className="p-5 bg-primary/5 border-primary/20 space-y-2.5 mt-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-primary font-bold text-sm">
+                      <HelpCircle className="w-4 h-4" />
+                      Module Knowledge Check ({currentQuizData.questions.length} Questions)
+                    </div>
+                    {selectedModule.completed && (
+                      <Badge className="bg-green-600 text-white text-xs">✓ Passed & Module Completed</Badge>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Completing this short module quiz unlocks Module {selectedModule.order + 1}.
+                  </p>
+                  <Button onClick={() => setActiveTab('quiz')} className="bg-primary hover:bg-primary/90 text-xs font-bold h-9">
+                    {selectedModule.completed ? 'Retake Module Quiz' : `Take Module ${selectedModule.order} Quiz (${currentQuizData.questions.length} Questions) →`}
+                  </Button>
+                </Card>
+              </div>
+            ) : (
+              <div className="max-w-xl mx-auto py-1">
+                <ModuleQuiz
+                  moduleId={selectedModule.id}
+                  moduleName={selectedModule.title}
+                  questions={currentQuizData.questions}
+                  onComplete={handleModuleQuizComplete}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Footer Nav */}
+          <div className="border-t border-border bg-card px-6 py-3 flex items-center justify-between flex-shrink-0">
             <Button
               variant="outline"
-              disabled={selectedModule.order === 1}
+              size="sm"
+              disabled={currentModuleIndex === 0}
               onClick={() => {
-                const prevModule = modules[selectedModule.order - 2];
-                if (prevModule) setSelectedModule(prevModule);
+                if (currentModuleIndex > 0) {
+                  setSelectedModule(modules[currentModuleIndex - 1]);
+                  setActiveTab('content');
+                }
               }}
+              className="text-xs h-8"
             >
-              ← Previous
+              ← Previous Module
             </Button>
 
-            <div className="flex-1" />
-
-            {selectedModule.completed ? (
-              <Badge className="bg-green-500/20 text-green-700 border-green-500/30 px-4 py-2 text-sm">
-                ✓ Completed
-              </Badge>
-            ) : (
-              <Button
-                className="bg-primary hover:bg-primary/90"
-                onClick={() => {
-                  updateModuleCompletion(selectedModule.id, true);
-                  setSelectedModule({ ...selectedModule, completed: true });
-                }}
-              >
-                <Play size={16} className="mr-2" />
-                Mark as Complete
-              </Button>
-            )}
+            <span className="text-xs text-muted-foreground font-medium">
+              Module {selectedModule.order} of {modules.length}
+            </span>
 
             <Button
               variant="outline"
-              disabled={selectedModule.order === modules.length}
+              size="sm"
+              disabled={
+                currentModuleIndex === modules.length - 1 ||
+                !isModuleUnlocked(currentModuleIndex + 1)
+              }
               onClick={() => {
-                const nextModule = modules[selectedModule.order];
-                if (nextModule) setSelectedModule(nextModule);
+                if (currentModuleIndex < modules.length - 1 && isModuleUnlocked(currentModuleIndex + 1)) {
+                  setSelectedModule(modules[currentModuleIndex + 1]);
+                  setActiveTab('content');
+                }
               }}
+              className="text-xs h-8"
             >
-              Next →
+              {currentModuleIndex < modules.length - 1 && !isModuleUnlocked(currentModuleIndex + 1)
+                ? '🔒 Pass Quiz to Unlock Next'
+                : 'Next Module →'}
             </Button>
           </div>
         </div>
