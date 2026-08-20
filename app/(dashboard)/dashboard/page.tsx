@@ -1,12 +1,17 @@
-'use client'
+'use client';
 
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { BookOpen, Clock, CheckCircle, Award, TrendingUp, Target, ArrowRight, Zap } from 'lucide-react';
+import { BookOpen, Clock, CheckCircle, Award, Target, ArrowRight, Zap, Search, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 
-// Mock data - will be replaced with API calls
+const statistics = [
+  { label: 'Courses Enrolled', value: '3', icon: BookOpen, color: 'text-sky-600 bg-sky-100 dark:bg-sky-950/60 border-sky-200' },
+  { label: 'Hours Spent', value: '24.5', icon: Clock, color: 'text-amber-600 bg-amber-100 dark:bg-amber-950/60 border-amber-200' },
+  { label: 'Completed Modules', value: '9', icon: CheckCircle, color: 'text-emerald-600 bg-emerald-100 dark:bg-emerald-950/60 border-emerald-200' },
+  { label: 'Certificates Earned', value: '2', icon: Award, color: 'text-indigo-600 bg-indigo-100 dark:bg-indigo-950/60 border-indigo-200' },
+];
+
 const enrolledCourses = [
   {
     id: '1',
@@ -48,165 +53,181 @@ const recentExams = [
   },
 ];
 
-const statistics = [
-  { label: 'Courses Enrolled', value: 3, icon: BookOpen },
-  { label: 'Hours Spent', value: 24.5, icon: Clock },
-  { label: 'Completed Modules', value: 9, icon: CheckCircle },
-  { label: 'Certificates Earned', value: 2, icon: Award },
-];
-
 export default function DashboardPage() {
   return (
-    <div className="p-6 md:p-8 space-y-8">
-      {/* Welcome Section with Background */}
-      <div className="relative rounded-2xl bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/20 p-8 overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-accent/10 rounded-full blur-3xl -z-0" />
-        <div className="relative z-10">
-          <h1 className="text-4xl font-bold text-foreground mb-2">Welcome Officer</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl">
+    <div className="p-6 md:p-8 space-y-8 max-w-7xl mx-auto font-sans">
+      {/* 1. Rich Gradient Welcome Banner */}
+      <div className="relative rounded-3xl bg-gradient-to-br from-sky-600 via-sky-700 to-indigo-800 text-white p-8 md:p-10 shadow-lg overflow-hidden">
+        <div className="absolute -top-10 -right-10 w-48 h-48 bg-white/10 rounded-full blur-2xl" />
+        <div className="relative z-10 space-y-3 max-w-3xl">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/20 backdrop-blur-xs text-white text-xs font-extrabold">
+            <Zap size={14} className="text-amber-300 fill-amber-300" />
+            <span>9 new modules available this week</span>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">
+            Welcome Officer
+          </h1>
+          <p className="text-sm md:text-base text-sky-100 leading-relaxed font-medium">
             Continue your professional development with our training modules and certification programs.
           </p>
-          <div className="mt-6 flex items-center gap-2">
-            <Zap className="w-4 h-4 text-accent" />
-            <span className="text-sm font-medium text-accent">9 new modules available this week</span>
-          </div>
         </div>
       </div>
 
-      {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {statistics.map((stat) => {
-          const Icon = stat.icon;
-          return (
-            <Card key={stat.label} className="p-6 flex items-start gap-4 hover:shadow-xl hover:border-primary/50 transition-all duration-300 bg-card/50 backdrop-blur">
-              <div className="p-3 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg group-hover:from-primary/30 group-hover:to-primary/20">
-                <Icon className="text-primary" size={24} />
-              </div>
-              <div className="flex-1">
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{stat.label}</p>
-                <p className="text-3xl font-bold text-foreground mt-2">
-                  {typeof stat.value === 'number' && stat.value % 1 !== 0
-                    ? stat.value.toFixed(1)
-                    : stat.value}
-                </p>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
-
-      {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Enrolled Courses */}
-        <div className="lg:col-span-2 space-y-6">
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h2 className="text-2xl font-bold text-foreground">My Courses</h2>
-                <p className="text-sm text-muted-foreground mt-1">Manage your enrolled courses</p>
-              </div>
-              <Link href="/courses">
-                <Button variant="outline" size="sm" className="border-border hover:bg-secondary/50">
-                  View All
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
-            </div>
-
-            <div className="space-y-4">
-              {enrolledCourses.map((course) => (
-                <Card
-                  key={course.id}
-                  className="p-6 hover:shadow-xl hover:border-primary/50 transition-all duration-300 group cursor-pointer bg-card/50 backdrop-blur border-border"
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
-                        {course.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground mt-1 flex items-center gap-1">
-                        <CheckCircle className="w-4 h-4" />
-                        {course.completedModules} of {course.modules} modules completed
-                      </p>
-                    </div>
-                    <Link href={`/courses/${course.id}`}>
-                      <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                        Continue
-                      </Button>
-                    </Link>
-                  </div>
-                  <div className="space-y-2">
-                    <Progress value={course.progress} className="h-2 bg-secondary" />
-                    <p className="text-xs font-medium text-accent">{course.progress}% complete</p>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </div>
+      {/* 2. My Progress Section (Compact & Accessible under Welcome Officer) */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-extrabold text-foreground tracking-tight flex items-center gap-2">
+            <TrendingUp size={20} className="text-sky-500" />
+            My Progress
+          </h2>
         </div>
 
-        {/* Recent Exams & Certificates */}
-        <div className="space-y-6">
-          <div>
-            <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-accent" />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+          {statistics.map((stat) => {
+            const Icon = stat.icon;
+            return (
+              <Card key={stat.label} className="p-4 rounded-2xl border border-border shadow-2xs bg-card flex items-center gap-3.5 hover:shadow-sm transition-all">
+                <div className={`p-2.5 rounded-xl border ${stat.color} shrink-0`}>
+                  <Icon size={20} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider">
+                    {stat.label}
+                  </p>
+                  <p className="text-xl md:text-2xl font-extrabold text-foreground mt-0.5">
+                    {stat.value}
+                  </p>
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 3. Three Big Navigation Cards (Elderly Accessible) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+        {/* Card 1: My Learning */}
+        <Link href="/courses?tab=my-learning" className="block group">
+          <Card className="p-7 text-center space-y-4 rounded-3xl border border-border/80 bg-card hover:shadow-xl hover:border-sky-500 transition-all duration-300 transform hover:-translate-y-1">
+            <div className="w-16 h-16 rounded-2xl bg-sky-50 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 flex items-center justify-center mx-auto border border-sky-100 dark:border-sky-900 group-hover:scale-110 transition-transform">
+              <BookOpen size={32} />
+            </div>
+            <div>
+              <h2 className="text-xl font-extrabold text-foreground group-hover:text-sky-600 transition-colors">
+                My Learning
+              </h2>
+              <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                Resume your enrolled courses and track your progress.
+              </p>
+            </div>
+            <Button className="w-full bg-sky-500 hover:bg-sky-600 text-white font-extrabold text-xs rounded-full h-10 shadow-sm">
+              Go to My Learning →
+            </Button>
+          </Card>
+        </Link>
+
+        {/* Card 2: Find Learning */}
+        <Link href="/courses?tab=catalog" className="block group">
+          <Card className="p-7 text-center space-y-4 rounded-3xl border border-border/80 bg-card hover:shadow-xl hover:border-indigo-500 transition-all duration-300 transform hover:-translate-y-1">
+            <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto border border-indigo-100 dark:border-indigo-900 group-hover:scale-110 transition-transform">
+              <Search size={32} />
+            </div>
+            <div>
+              <h2 className="text-xl font-extrabold text-foreground group-hover:text-indigo-600 transition-colors">
+                Find Learning
+              </h2>
+              <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                Browse the catalog and discover new training modules.
+              </p>
+            </div>
+            <Button variant="outline" className="w-full border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-300 font-extrabold text-xs rounded-full h-10 shadow-2xs hover:bg-indigo-50 dark:hover:bg-indigo-950">
+              Find Learning →
+            </Button>
+          </Card>
+        </Link>
+
+        {/* Card 3: Certificates */}
+        <Link href="/certificates" className="block group">
+          <Card className="p-7 text-center space-y-4 rounded-3xl border border-border/80 bg-card hover:shadow-xl hover:border-emerald-500 transition-all duration-300 transform hover:-translate-y-1">
+            <div className="w-16 h-16 rounded-2xl bg-emerald-50 dark:bg-emerald-950/80 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto border border-emerald-100 dark:border-emerald-900 group-hover:scale-110 transition-transform">
+              <Award size={32} />
+            </div>
+            <div>
+              <h2 className="text-xl font-extrabold text-foreground group-hover:text-emerald-600 transition-colors">
+                Certificates
+              </h2>
+              <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                View and download your earned module credentials.
+              </p>
+            </div>
+            <Button variant="outline" className="w-full border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-300 font-extrabold text-xs rounded-full h-10 shadow-2xs hover:bg-emerald-50 dark:hover:bg-emerald-950">
+              View Certificates →
+            </Button>
+          </Card>
+        </Link>
+      </div>
+
+      {/* 4. Recent Exams & Recommended Next Steps */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pt-2">
+        {/* Recent Exams (with See All link) */}
+        <div className="lg:col-span-2 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-extrabold text-foreground flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-sky-500" />
               Recent Exams
             </h2>
-            <div className="space-y-3">
-              {recentExams.map((exam) => (
-                <Card key={exam.id} className="p-4 hover:shadow-lg hover:border-accent/50 transition-all duration-300 border-border/50 bg-card/50">
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-medium text-foreground text-sm">{exam.title}</h3>
-                    {exam.passed && (
-                      <span className="inline-flex items-center gap-1 text-xs bg-green-500/20 text-green-700 dark:text-green-400 px-3 py-1 rounded-full font-medium">
-                        <CheckCircle size={14} />
-                        Passed
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-2xl font-bold text-primary">{exam.score}%</p>
-                  <p className="text-xs text-muted-foreground mt-2">{exam.completedAt}</p>
-                </Card>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h2 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
-              <Award className="w-5 h-5 text-accent" />
-              Certificates
-            </h2>
-            <Link href="/certificates">
-              <Button className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground">
-                View All Certificates
-              </Button>
+            <Link href="/exams" className="text-xs font-bold text-sky-600 dark:text-sky-400 hover:underline flex items-center gap-1">
+              See All <ArrowRight size={14} />
             </Link>
           </div>
 
-          <Card className="p-6 bg-gradient-to-br from-accent/10 via-primary/5 to-transparent border border-accent/20 hover:border-accent/50 transition-colors">
-            <div className="flex items-start gap-3">
-              <Target className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
-              <div>
-                <h3 className="font-semibold text-foreground mb-3">Recommended Next Steps</h3>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>
-                    Complete Crisis Management course
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>
-                    Retake Community Policing exam
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 bg-accent rounded-full"></span>
-                    Explore new communication skills course
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </Card>
+          <div className="space-y-3">
+            {recentExams.map((exam) => (
+              <Card key={exam.id} className="p-5 rounded-2xl border border-border bg-card shadow-xs hover:border-sky-300 transition-all flex items-center justify-between gap-4">
+                <div className="space-y-1">
+                  <h3 className="font-extrabold text-foreground text-sm">{exam.title}</h3>
+                  <p className="text-xs text-muted-foreground">Completed on {exam.completedAt}</p>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <p className="text-xl font-extrabold text-sky-600 dark:text-sky-400">{exam.score}%</p>
+                    <p className="text-[10px] text-muted-foreground font-semibold">Final Grade</p>
+                  </div>
+                  <span className="text-xs bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-bold px-3 py-1 rounded-full border border-emerald-300 dark:border-emerald-700">
+                    ✓ Passed
+                  </span>
+                </div>
+              </Card>
+            ))}
+          </div>
         </div>
+
+        {/* Recommended Next Steps */}
+        <Card className="p-6 rounded-3xl border border-border bg-card shadow-md space-y-4">
+          <div className="flex items-center gap-2 text-foreground font-extrabold text-base border-b border-border pb-3">
+            <Target className="w-5 h-5 text-sky-500" />
+            Recommended Next Steps
+          </div>
+
+          <ul className="space-y-3 text-xs font-medium text-muted-foreground">
+            <li className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-border flex items-center gap-2.5 text-foreground font-bold">
+              <span className="w-2 h-2 rounded-full bg-sky-500 flex-shrink-0" />
+              Complete Crisis Management course
+            </li>
+            <li className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-border flex items-center gap-2.5 text-foreground font-bold">
+              <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
+              Retake Community Policing exam
+            </li>
+            <li className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-border flex items-center gap-2.5 text-foreground font-bold">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
+              Explore new communication skills course
+            </li>
+          </ul>
+        </Card>
       </div>
     </div>
   );
 }
+
+

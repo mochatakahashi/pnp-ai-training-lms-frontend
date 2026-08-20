@@ -150,51 +150,58 @@ export function CourseExam({
     });
 
     return (
-      <div className="space-y-4 max-w-xl mx-auto py-2">
-        <Card className="p-6 text-center shadow-xl bg-card border-2 border-primary/20">
-          <div className="flex justify-center mb-3">
-            {passed ? (
-              <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center">
-                <CheckCircle2 className="w-9 h-9 text-green-600" />
-              </div>
-            ) : (
-              <div className="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center">
-                <XCircle className="w-9 h-9 text-red-600" />
-              </div>
-            )}
+      <div className="space-y-6 max-w-xl mx-auto py-8 text-center">
+        <Card className="p-8 shadow-xl bg-card border border-border rounded-3xl relative overflow-hidden">
+          {/* Confetti Decorative Accents */}
+          <div className="absolute top-4 left-6 w-3 h-3 bg-amber-400 rounded-sm rotate-12 opacity-80" />
+          <div className="absolute top-6 right-10 w-2.5 h-2.5 bg-rose-500 rounded-full opacity-80" />
+          <div className="absolute bottom-8 left-10 w-3 h-3 bg-sky-400 rounded-full opacity-80" />
+          <div className="absolute top-12 right-16 w-3 h-3 bg-emerald-500 rounded-sm -rotate-45 opacity-80" />
+
+          {/* Green Circle Badge Icon (Image 4 Vibe) */}
+          <div className="flex justify-center mb-6">
+            <div className="w-24 h-24 rounded-full bg-emerald-100 dark:bg-emerald-950/80 flex items-center justify-center border-4 border-emerald-200 dark:border-emerald-800 shadow-sm">
+              <Award className="w-12 h-12 text-emerald-600 dark:text-emerald-400" />
+            </div>
           </div>
 
-          <h2 className="text-2xl font-extrabold text-foreground mb-1">
-            {passed ? 'Congratulations! Exam Passed ✓' : 'Exam Not Passed'}
+          <h2 className="text-3xl font-extrabold text-foreground mb-3 tracking-tight">
+            {passed ? 'Module Passed!' : 'Assessment Complete'}
           </h2>
-          <p className="text-xs text-muted-foreground mb-4">
-            {passed
-              ? 'You achieved the 80% passing threshold and earned your certification!'
-              : `Passing threshold is 80% (40/50 correct). Your score: ${score}%`}
+
+          {passed && (
+            <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 font-bold text-xs mb-4">
+              <span>✨</span>
+              <span>Certificate Unlocked!</span>
+            </div>
+          )}
+
+          <p className="text-sm font-medium text-muted-foreground mb-6">
+            You scored <strong className="text-sky-600 dark:text-sky-400 text-base font-extrabold">{correctCount}</strong> out of {totalQuestions}
           </p>
 
-          {/* Score Summary Box */}
-          <div className="grid grid-cols-3 gap-3 bg-secondary/40 p-4 rounded-xl mb-6 text-center border border-border">
-            <div>
-              <p className="text-[11px] text-muted-foreground font-semibold">Your Score</p>
-              <p className="text-2xl font-extrabold text-primary">{score}%</p>
-            </div>
-            <div>
-              <p className="text-[11px] text-muted-foreground font-semibold">Correct Answers</p>
-              <p className="text-2xl font-extrabold text-green-600">{correctCount}/{totalQuestions}</p>
-            </div>
-            <div>
-              <p className="text-[11px] text-muted-foreground font-semibold">Required Threshold</p>
-              <p className="text-2xl font-extrabold text-blue-600">{passingScore}%</p>
-            </div>
-          </div>
+          {/* Action Button (Image 4 Pill Style) */}
+          <div className="space-y-3">
+            <Button
+              onClick={handleComplete}
+              className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold h-12 text-base rounded-full shadow-lg flex items-center justify-center gap-2"
+            >
+              <Award className="w-5 h-5" />
+              {passed ? 'Claim Your Certificate' : 'Review Course Material'}
+            </Button>
 
-          <Button
-            onClick={handleComplete}
-            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold h-11 text-sm shadow-md"
-          >
-            {passed ? 'View Official Certificate →' : 'Review Course Material'}
-          </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowResults(false);
+                setCurrentIndex(0);
+                setSelectedAnswers({});
+              }}
+              className="w-full rounded-full text-xs font-bold text-muted-foreground hover:text-foreground h-9"
+            >
+              Retake Assessment
+            </Button>
+          </div>
         </Card>
       </div>
     );

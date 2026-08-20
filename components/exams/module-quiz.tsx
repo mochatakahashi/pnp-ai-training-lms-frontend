@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, RotateCcw, ArrowRight } from 'lucide-react';
+import { CheckCircle2, RotateCcw, ArrowRight, AlertCircle } from 'lucide-react';
 
 interface Question {
   id: string;
@@ -67,8 +67,11 @@ export function ModuleQuiz({ moduleId, moduleName, questions, onComplete }: Modu
     setShowResults(false);
   };
 
+  const passingScore = 70;
+  const isPassed = score >= passingScore;
+
   const handleContinue = () => {
-    onComplete(score, true);
+    onComplete(score, isPassed);
   };
 
   const correctCount = Object.keys(selectedAnswers).filter(
@@ -77,30 +80,37 @@ export function ModuleQuiz({ moduleId, moduleName, questions, onComplete }: Modu
 
   if (showResults) {
     return (
-      <div className="space-y-3 max-w-lg mx-auto">
-        <Card className="p-4 text-center shadow-md bg-card border-2 border-primary/20">
-          <div className="flex justify-center mb-2">
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-              <CheckCircle2 className="w-6 h-6 text-primary" />
+      <div className="space-y-3 max-w-lg mx-auto font-sans">
+        <Card className={`p-6 text-center shadow-lg bg-card border-2 ${isPassed ? 'border-emerald-500/40' : 'border-rose-500/40'} rounded-3xl space-y-4`}>
+          <div className="flex justify-center">
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${isPassed ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/80 dark:text-emerald-300' : 'bg-rose-100 text-rose-600 dark:bg-rose-950/80 dark:text-rose-300'}`}>
+              <CheckCircle2 size={28} />
             </div>
           </div>
 
-          <h2 className="text-lg font-bold text-foreground">Quiz Completed!</h2>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Score: <strong className="text-primary text-sm font-extrabold">{score}%</strong> ({correctCount} of {questions.length} correct)
-          </p>
+          <div>
+            <h2 className="text-xl font-extrabold text-foreground">
+              {isPassed ? 'Quiz Passed!' : 'Quiz Not Passed'}
+            </h2>
+            <p className="text-xs text-muted-foreground mt-1">
+              Final Score: <strong className={`text-base font-extrabold ${isPassed ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>{score}%</strong> ({correctCount} of {questions.length} correct)
+            </p>
+            <p className="text-[11px] font-bold text-muted-foreground mt-1">
+              Passing score required: {passingScore}%
+            </p>
+          </div>
 
-          <div className="space-y-1.5 mt-3 text-left">
+          <div className="space-y-2 text-left pt-1">
             {questions.map((q, idx) => {
               const isCorrect = selectedAnswers[q.id] === q.correctAnswer;
               return (
-                <div key={q.id} className="p-2 rounded-lg bg-secondary/30 border border-border text-[11px]">
+                <div key={q.id} className="p-2.5 rounded-xl bg-secondary/30 border border-border text-xs">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-semibold text-foreground truncate">Q{idx + 1}: {q.question}</span>
+                    <span className="font-extrabold text-foreground truncate">Q{idx + 1}: {q.question}</span>
                     {isCorrect ? (
-                      <Badge className="bg-green-600 text-white font-semibold text-[9px] px-1.5 py-0 flex-shrink-0">✓ Correct</Badge>
+                      <Badge className="bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-300 font-bold text-[10px] px-2 py-0.5 shrink-0">✓ Correct</Badge>
                     ) : (
-                      <Badge className="bg-destructive text-destructive-foreground font-semibold text-[9px] px-1.5 py-0 flex-shrink-0">✕ Incorrect</Badge>
+                      <Badge className="bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300 border border-rose-300 font-bold text-[10px] px-2 py-0.5 shrink-0">✕ Incorrect</Badge>
                     )}
                   </div>
                 </div>
@@ -108,23 +118,41 @@ export function ModuleQuiz({ moduleId, moduleName, questions, onComplete }: Modu
             })}
           </div>
 
-          <div className="grid grid-cols-2 gap-2 mt-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleRetake}
-              className="text-xs font-bold h-9 border-border flex items-center justify-center gap-1"
-            >
-              <RotateCcw size={14} />
-              Retake Quiz
-            </Button>
-            <Button
-              size="sm"
-              onClick={handleContinue}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-bold h-9 flex items-center justify-center gap-1 shadow-sm"
-            >
-              Proceed to Next Module →
-            </Button>
+          <div className="pt-2">
+            {isPassed ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleRetake}
+                  className="rounded-full text-xs font-bold h-10 border-border flex items-center justify-center gap-1.5"
+                >
+                  <RotateCcw size={14} />
+                  Retake Quiz
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleContinue}
+                  className="rounded-full bg-sky-500 hover:bg-sky-600 text-white text-xs font-extrabold h-10 shadow-sm flex items-center justify-center gap-1.5"
+                >
+                  Proceed to Next Module →
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <p className="text-xs text-rose-600 dark:text-rose-400 font-semibold">
+                  You did not reach the 70% passing threshold. Please review the lesson and retake the quiz.
+                </p>
+                <Button
+                  size="sm"
+                  onClick={handleRetake}
+                  className="w-full rounded-full bg-sky-500 hover:bg-sky-600 text-white text-xs font-extrabold h-10 shadow-sm flex items-center justify-center gap-1.5"
+                >
+                  <RotateCcw size={14} />
+                  Retake Quiz Now
+                </Button>
+              </div>
+            )}
           </div>
         </Card>
       </div>
@@ -152,37 +180,81 @@ export function ModuleQuiz({ moduleId, moduleName, questions, onComplete }: Modu
         />
       </div>
 
-      {/* Question Card - Ultra Compact */}
-      <Card className="p-3.5 shadow-sm border-border">
-        <p className="text-[10px] text-primary font-bold mb-0.5 uppercase tracking-wider">Question {currentIndex + 1} of {questions.length}</p>
-        <h3 className="text-xs font-bold text-foreground mb-2.5 leading-snug">{currentQuestion.question}</h3>
+      {/* Question Card */}
+      <Card className="p-4 shadow-sm border-border space-y-3">
+        <div>
+          <p className="text-[10px] text-sky-600 dark:text-sky-400 font-extrabold mb-0.5 uppercase tracking-wider">
+            Question {currentIndex + 1} of {questions.length}
+          </p>
+          <h3 className="text-xs md:text-sm font-extrabold text-foreground leading-snug">
+            {currentQuestion.question}
+          </h3>
+        </div>
 
         {/* Options */}
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           {currentQuestion.options.map((option, idx) => {
             const isSelected = selectedAnswers[currentQuestion.id] === idx;
+            const isCorrectOption = idx === currentQuestion.correctAnswer;
+            const hasAnsweredCurrent = selectedAnswers[currentQuestion.id] !== undefined;
+
+            let optionStyle = 'border-border bg-card hover:bg-secondary/40 text-foreground';
+
+            if (hasAnsweredCurrent && isSelected) {
+              optionStyle = isCorrectOption
+                ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/70 font-extrabold text-emerald-900 dark:text-emerald-200 shadow-2xs'
+                : 'border-rose-500 bg-rose-50 dark:bg-rose-950/70 font-extrabold text-rose-900 dark:text-rose-200 shadow-2xs';
+            }
+
             return (
               <button
                 key={idx}
                 onClick={() => handleAnswerSelect(idx)}
-                className={`w-full p-2 rounded-lg border text-left text-xs font-medium transition-all flex items-center gap-2 ${
-                  isSelected
-                    ? 'border-primary bg-primary/10 font-bold text-foreground shadow-xs'
-                    : 'border-border bg-card hover:bg-secondary/40 text-foreground'
-                }`}
+                className={`w-full p-2.5 rounded-xl border text-left text-xs transition-all flex items-center gap-2.5 ${optionStyle}`}
               >
                 <div
-                  className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center flex-shrink-0 ${
-                    isSelected ? 'border-primary bg-primary text-white' : 'border-muted-foreground'
+                  className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                    isSelected
+                      ? isCorrectOption
+                        ? 'border-emerald-600 bg-emerald-600 text-white'
+                        : 'border-rose-600 bg-rose-600 text-white'
+                      : 'border-muted-foreground'
                   }`}
                 >
-                  {isSelected && <div className="w-1 h-1 rounded-full bg-white" />}
+                  {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                 </div>
-                <span className="text-xs leading-tight">{option}</span>
+                <span className="text-xs leading-tight font-medium">{option}</span>
               </button>
             );
           })}
         </div>
+
+        {/* Instant Answer Clue Feedback Card */}
+        {selectedAnswers[currentQuestion.id] !== undefined && (
+          <div className="pt-1">
+            {selectedAnswers[currentQuestion.id] === currentQuestion.correctAnswer ? (
+              <div className="p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-800 text-xs space-y-1 animate-in fade-in duration-200">
+                <div className="flex items-center gap-1.5 text-emerald-800 dark:text-emerald-300 font-extrabold text-xs">
+                  <CheckCircle2 size={16} />
+                  <span>Correct!</span>
+                </div>
+                <p className="text-[11px] text-emerald-700 dark:text-emerald-300 font-medium leading-relaxed">
+                  {currentQuestion.explanation || 'Great job! You selected the right answer based on PNP standards.'}
+                </p>
+              </div>
+            ) : (
+              <div className="p-3 rounded-2xl bg-amber-50 dark:bg-amber-950/70 border border-amber-300 dark:border-amber-800 text-xs space-y-1.5 animate-in fade-in duration-200">
+                <div className="flex items-center gap-1.5 text-amber-800 dark:text-amber-300 font-extrabold text-xs">
+                  <AlertCircle size={16} />
+                  <span>Incorrect • Here&apos;s a Clue</span>
+                </div>
+                <p className="text-[11px] text-amber-900 dark:text-amber-200 font-medium leading-relaxed">
+                  <strong className="font-extrabold">💡 Clue:</strong> {currentQuestion.explanation || 'Review the module reading material to find the correct answer.'}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </Card>
 
       {/* Navigation Footer */}

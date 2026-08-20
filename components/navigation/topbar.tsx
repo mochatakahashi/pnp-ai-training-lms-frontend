@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Bell, SearchIcon, X, Building2, LogOut, Menu } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { Bell, X, Building2, LogOut, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -55,24 +54,18 @@ export function Topbar({ userName }: TopbarProps) {
       <div className="flex items-center gap-3">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="p-2 rounded-lg bg-secondary hover:bg-secondary/80 text-foreground transition-all duration-200 border border-border flex items-center justify-center"
-          title={isOpen ? 'Close sidebar menu' : 'Open sidebar menu'}
+          className={`w-9 h-9 rounded-full transition-all duration-200 shadow-2xs hover:scale-105 flex items-center justify-center shrink-0 border ${
+            isOpen
+              ? 'bg-rose-50 dark:bg-rose-950/80 text-rose-600 dark:text-rose-300 border-rose-200 dark:border-rose-800 hover:bg-rose-500 hover:text-white hover:border-rose-500'
+              : 'bg-sky-50 dark:bg-sky-950/80 text-sky-600 dark:text-sky-300 border-sky-200 dark:border-sky-800 hover:bg-sky-500 hover:text-white hover:border-sky-500'
+          }`}
+          title={isOpen ? 'Close navigation sidebar' : 'Open navigation sidebar'}
           aria-label="Toggle sidebar menu"
         >
-          {isOpen ? <X size={20} /> : <Menu size={20} />}
+          {isOpen ? <X size={18} /> : <Menu size={18} />}
         </button>
 
-        {/* Search Bar */}
-        <div className="hidden md:flex flex-1 max-w-sm pl-2">
-          <div className="relative w-full">
-            <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-            <Input
-              type="text"
-              placeholder="Search courses, exams..."
-              className="pl-10 pr-4 bg-muted border-muted-foreground/20 w-full text-sm"
-            />
-          </div>
-        </div>
+
       </div>
 
       {/* Right Actions: Officer Badge & Station Info */}
